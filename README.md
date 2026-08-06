@@ -93,22 +93,6 @@ https://jfdxshjhukj5zxnkvhhlqd.streamlit.app/
 - F1 Score
 - Matthews Correlation Coefficient (MCC)
 
----
-
-## Model Comparison
-
-| Model | Accuracy | AUC | Precision | Recall | F1 | MCC |
-|--------|----------|-----|-----------|--------|----|-----|
-| Logistic Regression |0.830598375600861 |0.864157876 |0.755319149 |0.472703063 |0.581490581 |0.503076025 |
-| Decision Tree |0.811039284 |0.746907896805583 |0.62082777036048 |0.619174434087882 |0.62 |0.494256535685438 |
-| KNN |0.833250455826288 |0.861496229113774 |0.684798807749627 |0.611850865512649 |0.646272855133614 |0.539096795511174 |
-| Naive Bayes |0.790817172219459 |0.838862977076691 |0.667130919220055 |0.318908122503328 |0.431531531531531 |0.355436117559085 |
-| Random Forest |0.863583623404608 |0.91355203288134 |0.77181745396317 |0.641810918774966 |0.700836059614685 |0.617827047358319 |
-
-*(Fill these values from model_results.csv after training.)*
-
----
-
 ## Observations
 
 ### Logistic Regression
@@ -140,17 +124,8 @@ https://jfdxshjhukj5zxnkvhhlqd.streamlit.app/
 - Handles nonlinear relationships well
 - Less prone to overfitting than a single Decision Tree
 
----
-
-## Overall Best Model
-
-Random Forest achieved the best overall performance on the Adult Census Income dataset based on Accuracy, AUC, F1 Score, and MCC.
-
----
-
 ## Streamlit Features
 
-- Upload CSV test data
 - Select classification model
 - View predictions
 - Display evaluation metrics
