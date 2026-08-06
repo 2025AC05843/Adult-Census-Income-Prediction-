@@ -71,3 +71,64 @@ if uploaded:
     out["Prediction"]=np.where(pred==1,">50K","<=50K")
     st.dataframe(out.head())
     st.download_button("Download Predictions",out.to_csv(index=False),"predictions.csv","text/csv")
+
+
+    # -----------------------------------------
+# Model Performance & Observations
+# -----------------------------------------
+
+st.subheader("Model Performance & Observations")
+
+performance = pd.DataFrame({
+    "Model": [
+        "Logistic Regression",
+        "Decision Tree",
+        "KNN",
+        "Naive Bayes",
+        "Random Forest"
+    ],
+    "Accuracy": [0.8306, 0.8110, 0.8333, 0.7908, 0.8636],
+    "AUC": [0.8642, 0.7469, 0.8615, 0.8389, 0.9136],
+    "Precision": [0.7553, 0.6208, 0.6848, 0.6671, 0.7718],
+    "Recall": [0.4727, 0.6192, 0.6119, 0.3189, 0.6418],
+    "F1 Score": [0.5815, 0.6200, 0.6463, 0.4315, 0.7008],
+    "MCC": [0.5031, 0.4943, 0.5391, 0.3554, 0.6178]
+})
+
+st.dataframe(performance, use_container_width=True)
+
+st.markdown("### Model Observations")
+
+observations = {
+    "Logistic Regression":
+        "Accuracy: 83.06%. Good precision but lower recall. Performs well as a simple baseline model.",
+
+    "Decision Tree":
+        "Accuracy: 81.10%. Balanced precision and recall, but more susceptible to overfitting.",
+
+    "KNN":
+        "Accuracy: 83.33%. Better recall than Logistic Regression with a balanced F1-score, but slower on large datasets.",
+
+    "Naive Bayes":
+        "Accuracy: 79.08%. Lowest-performing model with the lowest recall and F1-score.",
+
+    "Random Forest":
+        "Accuracy: 86.36%. Best overall performance with the highest AUC, F1-score, and MCC."
+}
+
+st.info(observations[model_name])
+
+st.success(
+    """
+🏆 **Overall Winner: Random Forest**
+
+**Reason**
+
+- Highest Accuracy (86.36%)
+- Highest AUC (0.9136)
+- Highest F1 Score (0.7008)
+- Highest MCC (0.6178)
+
+Random Forest provided the best balance between precision and recall, making it the most suitable model for the Adult Census Income dataset.
+"""
+)
