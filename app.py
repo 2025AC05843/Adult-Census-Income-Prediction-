@@ -15,9 +15,6 @@ from sklearn.metrics import (
     classification_report
 )
 
-# ---------------------------------------------------
-# Streamlit Config
-# ---------------------------------------------------
 st.set_page_config(
     page_title="Adult Census Income Prediction",
     page_icon="📊",
@@ -25,11 +22,11 @@ st.set_page_config(
 )
 
 st.title("Adult Census Income Prediction")
-st.write("Machine Learning Assignment")
+st.write("Upload a CSV file to evaluate or predict income.")
 
-# ---------------------------------------------------
+# ----------------------------
 # Load Models
-# ---------------------------------------------------
+# ----------------------------
 models = {
     "Logistic Regression": pickle.load(open("models/logistic_regression.pkl", "rb")),
     "Decision Tree": pickle.load(open("models/decision_tree.pkl", "rb")),
@@ -41,29 +38,33 @@ models = {
 scaler = pickle.load(open("models/scaler.pkl", "rb"))
 encoders = pickle.load(open("models/label_encoders.pkl", "rb"))
 
-# ---------------------------------------------------
+# ----------------------------
 # Sidebar
-# ---------------------------------------------------
+# ----------------------------
 model_name = st.sidebar.selectbox(
     "Select Model",
     list(models.keys())
 )
 
 uploaded_file = st.file_uploader(
-    "Upload Test CSV",
+    "Upload CSV File",
     type=["csv"]
 )
 
 if uploaded_file is not None:
 
-    # ---------------------------------------------------
-    # Read CSV
-    # ---------------------------------------------------
     df = pd.read_csv(uploaded_file)
 
-    # Clean string columns
+    # ----------------------------
+    # Clean Data
+    # ----------------------------
     for col in df.select_dtypes(include=["object", "string"]).columns:
-        df[col] = df[col].astype(str).str.strip()
+        df[col] = (
+            df[col]
+            .astype(str)
+            .str.strip()
+            .str.replace(".", "", regex=False)
+        )
 
     df.replace("?", np.nan, inplace=True)
     df.dropna(inplace=True)
@@ -71,43 +72,58 @@ if uploaded_file is not None:
     st.subheader("Uploaded Dataset")
     st.dataframe(df.head())
 
-    if "income" not in df.columns:
-        st.error("Uploaded CSV must contain the 'income' column.")
-        st.stop()
+    # ----------------------------
+    # Check if target exists
+    # ----------------------------
+    has_target = "income" in df.columns
 
-    # ---------------------------------------------------
-    # Target
-    # ---------------------------------------------------
-    y = encoders["income"].transform(df["income"].astype(str))
+    if has_target:
+        income_mapping = {
+            "<=50K": 0,
+            ">50K": 1
+        }
 
-    X = df.drop(columns=["income"])
+        y = (
+            df["income"]
+            .map(income_mapping)
+        )
 
-    # ---------------------------------------------------
+        if y.isnull().any():
+            st.error("Unknown values found in the income column.")
+            st.stop()
+
+        y = y.astype(int)
+
+        X = df.drop(columns=["income"])
+
+    else:
+        X = df.copy()
+
+    # ----------------------------
     # Encode categorical columns
-    # ---------------------------------------------------
+    # ----------------------------
     for col in X.columns:
 
         if col in encoders:
 
             le = encoders[col]
 
-            X[col] = X[col].astype(str)
+            mapping = {
+                cls: idx
+                for idx, cls in enumerate(le.classes_)
+            }
 
-            mapping = dict(
-                zip(
-                    le.classes_,
-                    le.transform(le.classes_)
-                )
+            X[col] = (
+                X[col]
+                .astype(str)
+                .map(mapping)
+                .fillna(0)
+                .astype(int)
             )
 
-            X[col] = X[col].map(mapping)
-
-            # Unknown category -> first encoded class
-            X[col] = X[col].fillna(0).astype(int)
-
-    # ---------------------------------------------------
-    # Select model
-    # ---------------------------------------------------
+    # ----------------------------
+    # Scaling
+    # ----------------------------
     model = models[model_name]
 
     if model_name in ["Logistic Regression", "KNN"]:
@@ -122,92 +138,113 @@ if uploaded_file is not None:
     else:
         probabilities = predictions
 
-    # ---------------------------------------------------
+    prediction_labels = np.where(
+        predictions == 0,
+        "<=50K",
+        ">50K"
+    )
+
+    # ----------------------------
     # Metrics
-    # ---------------------------------------------------
-    accuracy = accuracy_score(y, predictions)
-    precision = precision_score(y, predictions)
-    recall = recall_score(y, predictions)
-    f1 = f1_score(y, predictions)
-    auc = roc_auc_score(y, probabilities)
-    mcc = matthews_corrcoef(y, predictions)
+    # ----------------------------
+    if has_target:
 
-    st.subheader("Evaluation Metrics")
+        st.subheader("Evaluation Metrics")
 
-    c1, c2, c3 = st.columns(3)
+        c1, c2, c3 = st.columns(3)
 
-    c1.metric("Accuracy", f"{accuracy:.4f}")
-    c2.metric("Precision", f"{precision:.4f}")
-    c3.metric("Recall", f"{recall:.4f}")
+        c1.metric(
+            "Accuracy",
+            f"{accuracy_score(y, predictions):.4f}"
+        )
 
-    c1.metric("F1 Score", f"{f1:.4f}")
-    c2.metric("AUC", f"{auc:.4f}")
-    c3.metric("MCC", f"{mcc:.4f}")
+        c2.metric(
+            "Precision",
+            f"{precision_score(y, predictions):.4f}"
+        )
 
-    # ---------------------------------------------------
-    # Confusion Matrix
-    # ---------------------------------------------------
-    st.subheader("Confusion Matrix")
+        c3.metric(
+            "Recall",
+            f"{recall_score(y, predictions):.4f}"
+        )
 
-    cm = confusion_matrix(y, predictions)
+        c1.metric(
+            "F1 Score",
+            f"{f1_score(y, predictions):.4f}"
+        )
 
-    fig, ax = plt.subplots(figsize=(5,4))
+        c2.metric(
+            "AUC",
+            f"{roc_auc_score(y, probabilities):.4f}"
+        )
 
-    im = ax.imshow(cm)
+        c3.metric(
+            "MCC",
+            f"{matthews_corrcoef(y, predictions):.4f}"
+        )
 
-    ax.set_xticks([0,1])
-    ax.set_yticks([0,1])
+        # ----------------------------
+        # Confusion Matrix
+        # ----------------------------
+        st.subheader("Confusion Matrix")
 
-    ax.set_xticklabels(["<=50K", ">50K"])
-    ax.set_yticklabels(["<=50K", ">50K"])
+        cm = confusion_matrix(y, predictions)
 
-    ax.set_xlabel("Predicted")
-    ax.set_ylabel("Actual")
+        fig, ax = plt.subplots(figsize=(5, 4))
 
-    for i in range(2):
-        for j in range(2):
-            ax.text(j, i, cm[i,j],
+        ax.imshow(cm)
+
+        ax.set_xticks([0, 1])
+        ax.set_yticks([0, 1])
+
+        ax.set_xticklabels(["<=50K", ">50K"])
+        ax.set_yticklabels(["<=50K", ">50K"])
+
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("Actual")
+
+        for i in range(2):
+            for j in range(2):
+                ax.text(
+                    j,
+                    i,
+                    cm[i, j],
                     ha="center",
                     va="center",
-                    color="black",
-                    fontsize=12)
+                    fontsize=12
+                )
 
-    st.pyplot(fig)
+        st.pyplot(fig)
 
-    # ---------------------------------------------------
-    # Classification Report
-    # ---------------------------------------------------
-    st.subheader("Classification Report")
+        st.subheader("Classification Report")
 
-    report = classification_report(
-        y,
-        predictions,
-        output_dict=True
-    )
+        report = classification_report(
+            y,
+            predictions,
+            output_dict=True
+        )
 
-    st.dataframe(pd.DataFrame(report).transpose())
+        st.dataframe(
+            pd.DataFrame(report).transpose()
+        )
 
-    # ---------------------------------------------------
-    # Predictions
-    # ---------------------------------------------------
+    # ----------------------------
+    # Prediction Results
+    # ----------------------------
     result = df.copy()
 
-    result["Prediction"] = encoders["income"].inverse_transform(
-        predictions
-    )
+    result["Prediction"] = prediction_labels
 
-    st.subheader("Prediction Results")
+    st.subheader("Predictions")
 
     st.dataframe(result)
 
-    csv = result.to_csv(index=False).encode("utf-8")
-
     st.download_button(
         "Download Predictions",
-        csv,
-        file_name="predictions.csv",
-        mime="text/csv"
+        result.to_csv(index=False),
+        "predictions.csv",
+        "text/csv"
     )
 
 else:
-    st.info("Upload the generated test_data.csv file to evaluate the models.")
+    st.info("Upload test_data.csv or any Adult Census dataset CSV.")
