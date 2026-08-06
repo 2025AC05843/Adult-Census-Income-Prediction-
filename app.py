@@ -19,11 +19,15 @@ scaler=pickle.load(open("models/scaler.pkl","rb"))
 encoders=pickle.load(open("models/label_encoders.pkl","rb"))
 
 model_name=st.sidebar.selectbox("Select Model",list(models.keys()))
-uploaded=st.file_uploader("Upload CSV",type="csv")
 
-if uploaded:
-    df=pd.read_csv(uploaded)
-    for c in df.select_dtypes(include=["object","string"]).columns:
+# Automatically load test dataset
+df = pd.read_csv("test_data.csv")
+
+st.success("Loaded test_data.csv successfully.")
+st.subheader("Dataset Preview")
+st.dataframe(df.head())
+
+for c in df.select_dtypes(include=["object","string"]).columns:
         df[c]=df[c].astype(str).str.strip().str.replace(".","",regex=False)
     df.replace("?",np.nan,inplace=True)
     df.dropna(inplace=True)
@@ -70,7 +74,7 @@ if uploaded:
     out=df.copy()
     out["Prediction"]=np.where(pred==1,">50K","<=50K")
     st.dataframe(out.head())
-    st.download_button("Download Predictions",out.to_csv(index=False),"predictions.csv","text/csv")
+    
 
 
     # -----------------------------------------
