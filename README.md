@@ -67,7 +67,7 @@ Adult-Census-Income-Prediction/
 
 Replace this after uploading:
 
-https://github.com/yourusername/Adult-Census-Income-Prediction
+https://github.com/2025AC05843/Adult-Census-Income-Prediction-
 
 ---
 
@@ -171,8 +171,8 @@ Random Forest achieved the best overall performance on the Adult Census Income d
 
 ## Author
 
-Name: YOUR NAME
+Name: DHINESH.G
 
-BITS ID: YOUR ID
+BITS ID: 2025AC05843
 
 Course: Machine Learning
