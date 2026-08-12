@@ -53,6 +53,7 @@ native.country
 
 **Project Structure**
 
+
 Adult-Census-Income-Prediction/
 │── app.py
 │── train_models.py
@@ -70,6 +71,7 @@ Adult-Census-Income-Prediction/
 │   ├── random_forest.pkl
 │   ├── scaler.pkl
 │   └── label_encoders.pkl
+
 
 **GitHub Repository**
 
@@ -107,89 +109,13 @@ Matthews Correlation Coefficient (MCC)
 
 **Model Results**
 
-Model
-
-Accuracy
-
-AUC
-
-Precision
-
-Recall
-
-F1 Score
-
-MCC
-
-Logistic Regression
-
-0.8306
-
-0.8642
-
-0.7553
-
-0.4727
-
-0.5815
-
-0.5031
-
-Decision Tree
-
-0.8110
-
-0.7469
-
-0.6208
-
-0.6192
-
-0.6200
-
-0.4943
-
-KNN
-
-0.8333
-
-0.8615
-
-0.6848
-
-0.6119
-
-0.6463
-
-0.5391
-
-Naive Bayes
-
-0.7908
-
-0.8389
-
-0.6671
-
-0.3189
-
-0.4315
-
-0.3554
-
-Random Forest
-
-0.8636
-
-0.9136
-
-0.7718
-
-0.6418
-
-0.7008
-
-0.6178
+| Model | Accuracy | AUC | Precision | Recall | F1 Score | MCC |
+|---|---:|---:|---:|---:|---:|---:|
+| Logistic Regression | 0.8306 | 0.8642 | 0.7553 | 0.4727 | 0.5815 | 0.5031 |
+| Decision Tree | 0.8110 | 0.7469 | 0.6208 | 0.6192 | 0.6200 | 0.4943 |
+| KNN | 0.8333 | 0.8615 | 0.6848 | 0.6119 | 0.6463 | 0.5391 |
+| Naive Bayes | 0.7908 | 0.8389 | 0.6671 | 0.3189 | 0.4315 | 0.3554 |
+| Random Forest | **0.8636** | **0.9136** | **0.7718** | **0.6418** | **0.7008** | **0.6178** |
 
 **Observations**
 
