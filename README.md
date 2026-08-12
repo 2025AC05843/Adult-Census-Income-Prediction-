@@ -16,63 +16,6 @@ Number of Features: 14
 
 Target Variable: income
 
-**Features**
-
-age
-
-workclass
-
-fnlwgt
-
-education
-
-education.num
-
-marital.status
-
-occupation
-
-relationship
-
-race
-
-sex
-
-capital.gain
-
-capital.loss
-
-hours.per.week
-
-native.country
-
-**Target Classes:**
-
-<=50K
-50K
-
-**Project Structure**
-
-
-Adult-Census-Income-Prediction/
-│── app.py
-│── train_models.py
-│── requirements.txt
-│── README.md
-│── adult.csv
-│── test_data.csv
-│── model_results.csv
-│
-├── models/
-│   ├── logistic_regression.pkl
-│   ├── decision_tree.pkl
-│   ├── knn.pkl
-│   ├── naive_bayes.pkl
-│   ├── random_forest.pkl
-│   ├── scaler.pkl
-│   └── label_encoders.pkl
-
-
 **GitHub Repository**
 
 https://github.com/2025AC05843/Adult-Census-Income-Prediction-
@@ -127,41 +70,3 @@ Matthews Correlation Coefficient (MCC)
 | **Naive Bayes** | Achieved **79.08% accuracy** and **0.8389 AUC**. It has the lowest recall (**0.3189**) and F1 score (**0.4315**), making it the weakest overall performer. |
 | **Random Forest (Ensemble)** | Achieved the **highest performance across all metrics**: 86.36% accuracy, 0.9136 AUC, 0.7718 precision, 0.6418 recall, 0.7008 F1, and 0.6178 MCC. |
 | **Overall Winner** | **Random Forest (Ensemble)** is the overall winner because it performs best across all six evaluation metrics. |
-
-**Streamlit Features**
-
-Select classification model
-
-View predictions
-
-Display evaluation metrics
-
-Confusion Matrix
-
-Classification Report
-
-Download prediction results
-
-**Requirements**
-
-Python 3.10+
-
-Streamlit
-
-Pandas
-
-NumPy
-
-Scikit-learn
-
-Matplotlib
-
-Seaborn
-
-**Author**
-
-Name: DHINESH.G
-
-BITS ID: 2025AC05843
-
-Course: Machine Learning
